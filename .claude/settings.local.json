@@ -3,7 +3,12 @@
     "allow": [
       "Bash(pnpm install *)",
       "Bash(pnpm *)",
-      "Bash(node_modules/.bin/vitest.CMD run *)"
+      "Bash(node_modules/.bin/vitest.CMD run *)",
+      "Bash(node_modules/.bin/tsc --noEmit)",
+      "Bash(npx tsc *)",
+      "Bash(cp \"C:\\\\Users\\\\jd\\\\source\\\\repos\\\\EternalXI\\\\plan\\\\iteration-6.md\" \"C:\\\\Users\\\\jd\\\\source\\\\repos\\\\EternalXI\\\\plan\\\\iteration-7.md\")",
+      "Bash(cp \"C:\\\\Users\\\\jd\\\\source\\\\repos\\\\EternalXI\\\\plan\\\\iteration-5.md\" \"C:\\\\Users\\\\jd\\\\source\\\\repos\\\\EternalXI\\\\plan\\\\iteration-6.md\")",
+      "Bash(npx --yes vue-tsc --version)"
     ]
   }
 }

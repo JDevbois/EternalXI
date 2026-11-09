@@ -1,5 +1,44 @@
 # Changelog
 
+## 2026-05-13 (session 5b)
+
+### Away team AI — substitutions and tactic adaptation
+
+- `matchEngine.ts`: restored `planAutoSubs` / `applySubstitutions` for the away team; away lineup now mutates segment-by-segment during simulation; added `awayHalfTimeTacticDecision` (losing → attacking, winning by 2+ → defensive); new `simulateMatchWithMeta` export returns away sub plan, bench, and second-half tactic alongside the result; `reSimulateRemainingEvents` now takes separate first/second-half away tactics plus remaining away subs and applies them during re-sim
+- `matchStore.ts`: added `awayBenchSnapshot`, `awayPlannedSubs`, `awaySecondHalfTactic`; `changeTactic` now computes the effective away lineup via `computeLineupAtMinute` and passes remaining away subs into re-simulation
+- `useSimulation.ts`: switched to `simulateMatchWithMeta` and forwards the new away metadata into `startPlaying`
+
+## 2026-05-13 (session 5)
+
+### Interactive Match Engine (Iteration 5)
+
+- Rewrote `apps/web/src/engine/matchEngine.ts` — removed all automatic substitution logic (`planAutoSubs`, `applySubstitutions`, `AUTO_SUB_MINUTES`); exported `tacticBonus`; added `reSimulateRemainingEvents` for mid-match tactic re-computation
+- Rewrote `apps/web/src/store/matchStore.ts` — real-time RAF clock model replacing event-drip-feed; new phases: `playing | paused | halftime_break | penalties_pending | done`; live squad state (`liveHomeSlots`, `liveHomeBench`), substitution tracking (`subsUsed`, max 3), tactic override with future-event re-simulation
+- Updated `apps/web/src/features/match-simulator/useSimulation.ts` — `startPlaying` now passes home/away lineup snapshots and knockout flag into the store
+- Added `apps/web/src/features/match-simulator/components/MatchClockBar.tsx` — real-time progress bar (0′→90′), half indicator, live pulse dot, pause/resume button
+- Added `apps/web/src/features/match-simulator/components/PausePanel.tsx` — substitution panel (max 3, position listed, inline bench picker) and tactic selector (defensive/balanced/attacking); slides in on pause and at halftime
+- Rewrote `apps/web/src/features/match-simulator/MatchSimulatorPage.tsx` — RAF loop drives clock; events revealed by match minute not tick count; PausePanel auto-opens at halftime; removed Skip button and setInterval drip-feed
+
+## 2026-05-13 (session 4)
+
+### World Cup Mode — Group Phase & Full Tournament (Iteration 4)
+
+- Added `packages/player-data/src/squads/extras00s.ts` — 10 squads for 2002 and 2006 editions (South Korea, Turkey, Senegal, England, Spain, Germany, Portugal, England, Ukraine, Brazil)
+- Added `packages/player-data/src/squads/extras10s.ts` — 20 squads for 2010, 2014, 2018, 2022 editions (Uruguay, Germany, Ghana, Brazil, Argentina, Brazil, Netherlands, Colombia, Belgium, Uruguay, Belgium, England, Uruguay, Brazil, Japan, Morocco, Croatia, Netherlands, Brazil, England)
+- Updated `packages/player-data/src/historicalSquads.ts` — `WcEdition` now has `groups: [HistoricalSquad[], HistoricalSquad[]]`; all 14 editions populated with 2–3 group opponents each
+- Updated `packages/player-data/src/index.ts` — `getAllPlayers()` now includes all players from all historical squads (champions, runners-up, and group teams), deduplicated by ID
+- Rewrote `apps/web/src/store/tournamentStore.ts` — full group stage support: `GroupEntry[]`, `groupMatchIndex`, `recordGroupResult`, `advanceToKnockout`, `sortGroup`
+- Rewrote `apps/web/src/features/match-simulator/useSimulation.ts` — routes to group vs knockout vs free-play code paths
+- Updated `apps/web/src/features/match-simulator/MatchSimulatorPage.tsx` — handles group phase opponents; renamed phase aliases to avoid TS2451 redeclaration
+- Rewrote `apps/web/src/features/world-cup/TournamentPage.tsx` — group standings + next match flow; knockout bracket with derived SF/Final opponents
+- Added `apps/web/src/features/world-cup/components/GroupStandings.tsx` — standings table (P/W/D/L/GD/Pts) with user row highlighted
+- Rewrote `apps/web/src/features/world-cup/components/TournamentBracket.tsx` — uses passed `sfOpponent`/`finalOpponent` props instead of reading edition directly
+- Updated `apps/web/src/features/match-report/MatchReportPage.tsx` — group match banners, correct button routing for all tournament phases
+- Added `apps/web/src/features/squad-builder/components/PresetPicker.tsx` — two-step modal: pick edition → pick squad; loads formation, tactic, and all 11+5 players into the squad builder
+- Added `loadPreset(side, squad)` action to `squadStore` — replaces squad state wholesale from a HistoricalSquad
+- Updated `SquadBuilderPage.tsx` — "Load Preset" button per squad panel, wires to PresetPicker
+- Updated `EditionCard.tsx` — shows squad count badge (e.g. "7 squads")
+
 ## 2026-05-08 (session 3)
 
 ### Match simulator improvements
